@@ -1,38 +1,34 @@
+FROM pytorch/pytorch:0.4.1-cuda9-cudnn7-devel
 
-FROM nvidia/cuda:11.0-base-ubuntu20.04
-
-# Install some basic utilities
-RUN apt-get update && apt-get install -y \
-    curl \
-    ca-certificates \
-    sudo \
+RUN apt update && apt install -y --no-install-recommends \
     git \
-    bzip2 \
-    libx11-6 \
- && rm -rf /var/lib/apt/lists/*
+    nano \
+    unzip \
+    wget \
+    python3-dev \
+    python3-pip \
+    python3-setuptools
+RUN pip install --upgrade pip
 
-# Install Miniconda and Python 3.8
-ENV CONDA_AUTO_UPDATE_CONDA=false
-ENV PATH=/home/user/miniconda/bin:$PATH
-RUN curl -sLo ~/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-py38_4.8.3-Linux-x86_64.sh \
- && chmod +x ~/miniconda.sh \
- && ~/miniconda.sh -b -p ~/miniconda \
- && rm ~/miniconda.sh \
- && conda install -y python==3.8.3 \
- && conda clean -ya
+RUN apt-get update \
+     && apt-get install -y \
+        libgl1-mesa-glx \
+        libx11-xcb1 \
+        libgtk2.0-dev \
+     && apt-get clean all \
+     && rm -r /var/lib/apt/lists/*
 
-# CUDA 11.0-specific steps
-RUN conda install -y -c pytorch \
-    cudatoolkit=11.0.221 \
-    "pytorch=0.4.1=py3.8_cuda11.0.221_cudnn8.0.3_0" \
-    "torchvision=0.8.1=py38_cu110" \
- && conda clean -ya
-
-RUN conda install ffmpeg -c conda-forge
-
-RUN pip install -r requirements.txt
-
-RUN apt -y install git nano unzip
-
-# Set the default command to python3
-CMD ["python3"]
+RUN pip install numpy==1.16.2
+RUN pip install scipy==1.1.0
+RUN pip install tensorboardX==1.2
+RUN pip install torch==0.4.1
+RUN pip install tqdm==4.15.0
+RUN pip install imageio==2.3.0
+RUN pip install opencv-python==3.4.4.19
+RUN pip install sklearn==0.0
+RUN pip install scikit-learn==0.21.3
+RUN pip install scipy==1.1.0
+RUN pip install matplotlib==3.1.1
+RUN pip install ffmpeg-python
+RUN pip install imageio-ffmpeg
+RUN imageio_download_bin ffmpeg
